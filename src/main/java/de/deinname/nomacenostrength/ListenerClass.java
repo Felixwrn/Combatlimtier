@@ -3,36 +3,56 @@ package de.deinname.nomacenostrength;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 public class ListenerClass implements Listener {
 
+    // Mace verhindern oder löschen
     @EventHandler
-    public void onClick(InventoryClickEvent e){
-        if(e.getCurrentItem()==null) return;
-        if(e.getCurrentItem().getType()==Material.MACE){
+    public void onInventoryClick(InventoryClickEvent e) {
+        if (e.getCurrentItem() == null) return;
+        if (e.getCurrentItem().getType() == Material.MACE && !Main.maceEnabled) {
             e.setCancelled(true);
             e.setCurrentItem(null);
+            e.getWhoClicked().sendMessage("§cMaces sind deaktiviert!");
         }
     }
 
     @EventHandler
-    public void onPickup(EntityPickupItemEvent e){
-        if(e.getItem().getItemStack().getType()==Material.MACE){
+    public void onPickup(EntityPickupItemEvent e) {
+        if (e.getItem().getItemStack().getType() == Material.MACE && !Main.maceEnabled) {
             e.setCancelled(true);
             e.getItem().remove();
         }
     }
 
+    // Stärke-Tränke kontrollieren
     @EventHandler
-    public void onDrink(PlayerItemConsumeEvent e){
-        if(e.getItem().getItemMeta() instanceof PotionMeta meta){
-            if(meta.getBasePotionData().getType().name().contains("STRENGTH")){
-                e.setCancelled(true);
+    public void onDrink(PlayerItemConsumeEvent e) {
+        if (e.getItem().getItemMeta() instanceof PotionMeta meta) {
+            if (meta.getBasePotionData().getType().name().contains("STRENGTH")) {
+                // nur Stärke I erlauben
+                PotionEffect existing = e.getPlayer().getPotionEffect(PotionEffectType.INCREASE_DAMAGE);
+                if (existing != null && existing.getAmplifier() > 0) {
+                    e.setCancelled(true);
+                    e.getPlayer().sendMessage("§cNur Stärke I ist erlaubt!");
+                }
             }
+        }
+    }
+
+    // Alle Stärke-Effekte > I blockieren
+    @EventHandler
+    public void onEffect(EntityPotionEffectEvent e) {
+        PotionEffect effect = e.getNewEffect();
+        if (effect != null && effect.getType() == PotionEffectType.INCREASE_DAMAGE && effect.getAmplifier() > 0) {
+            e.setCancelled(true);
         }
     }
 }
