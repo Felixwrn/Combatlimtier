@@ -46,20 +46,17 @@ public class ListenerClass implements Listener {
 
             // Stärke-Trank prüfen
             if (typeName.contains("STRENGTH")) {
-                PotionEffectType strength = PotionEffectType.getByName("INCREASE_DAMAGE");
-                if (strength != null) {
-                    PotionEffect existing = e.getPlayer().getPotionEffect(strength);
-                    // Stärke II+ blockieren
-                    if (existing != null && existing.getAmplifier() >= 1) {
-                        e.setCancelled(true);
-                        e.getPlayer().sendMessage("§cNur Stärke I ist erlaubt! Stärke II+ darf nicht getrunken werden!");
-                    }
+                // Stärke-Level direkt vom Trank bestimmen
+                int amplifier = meta.getBasePotionData().isUpgraded() ? 1 : 0; // false = Stärke I, true = Stärke II+
+                if (amplifier > 0) {
+                    e.setCancelled(true);
+                    e.getPlayer().sendMessage("§cNur Stärke I ist erlaubt! Stärke II+ darf nicht getrunken werden!");
                 }
             }
         }
     }
 
-    // Alle Stärke > I oder Schwäche blockieren
+    // Effekte blockieren: Stärke II+ und Schwäche
     @EventHandler
     public void onEffect(EntityPotionEffectEvent e) {
         PotionEffect effect = e.getNewEffect();
