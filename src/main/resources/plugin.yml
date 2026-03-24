@@ -1,4 +1,9 @@
 name: NoMaceNoStrength
-version: 1.0
+version: 1.1
 main: de.deinname.nomacenostrength.Main
 api-version: 1.21
+
+commands:
+  togglemace:
+    description: Schaltet Maces ein/aus
+    usage: /togglemace
