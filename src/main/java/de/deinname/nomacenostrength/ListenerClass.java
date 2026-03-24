@@ -13,6 +13,7 @@ import org.bukkit.potion.PotionEffectType;
 
 public class ListenerClass implements Listener {
 
+    // Maces verhindern
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
         if (e.getCurrentItem() == null) return;
@@ -31,6 +32,7 @@ public class ListenerClass implements Listener {
         }
     }
 
+    // Tränke trinken
     @EventHandler
     public void onDrink(PlayerItemConsumeEvent e) {
         if (e.getItem().getItemMeta() instanceof PotionMeta meta) {
@@ -42,20 +44,22 @@ public class ListenerClass implements Listener {
                 e.getPlayer().sendMessage("§cSchwäche-Tränke sind deaktiviert!");
             }
 
-            // Stärke-Trank kontrollieren
+            // Stärke-Trank prüfen
             if (typeName.contains("STRENGTH")) {
                 PotionEffectType strength = PotionEffectType.getByName("INCREASE_DAMAGE");
                 if (strength != null) {
                     PotionEffect existing = e.getPlayer().getPotionEffect(strength);
-                    if (existing != null && existing.getAmplifier() > 0) {
+                    // Stärke II+ blockieren
+                    if (existing != null && existing.getAmplifier() >= 1) {
                         e.setCancelled(true);
-                        e.getPlayer().sendMessage("§cNur Stärke I ist erlaubt!");
+                        e.getPlayer().sendMessage("§cNur Stärke I ist erlaubt! Stärke II+ darf nicht getrunken werden!");
                     }
                 }
             }
         }
     }
 
+    // Alle Stärke > I oder Schwäche blockieren
     @EventHandler
     public void onEffect(EntityPotionEffectEvent e) {
         PotionEffect effect = e.getNewEffect();
