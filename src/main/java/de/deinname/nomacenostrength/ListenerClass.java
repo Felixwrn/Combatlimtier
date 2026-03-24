@@ -13,7 +13,6 @@ import org.bukkit.potion.PotionEffectType;
 
 public class ListenerClass implements Listener {
 
-    // Mace verhindern oder löschen
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
         if (e.getCurrentItem() == null) return;
@@ -32,27 +31,40 @@ public class ListenerClass implements Listener {
         }
     }
 
-    // Stärke-Tränke kontrollieren
     @EventHandler
     public void onDrink(PlayerItemConsumeEvent e) {
         if (e.getItem().getItemMeta() instanceof PotionMeta meta) {
-            if (meta.getBasePotionData().getType().name().contains("STRENGTH")) {
-                // nur Stärke I erlauben
-                PotionEffect existing = e.getPlayer().getPotionEffect(PotionEffectType.INCREASE_DAMAGE);
-                if (existing != null && existing.getAmplifier() > 0) {
-                    e.setCancelled(true);
-                    e.getPlayer().sendMessage("§cNur Stärke I ist erlaubt!");
+            String typeName = meta.getBasePotionData().getType().name();
+
+            // Schwäche blockieren
+            if (typeName.contains("WEAKNESS")) {
+                e.setCancelled(true);
+                e.getPlayer().sendMessage("§cSchwäche-Tränke sind deaktiviert!");
+            }
+
+            // Stärke-Trank kontrollieren
+            if (typeName.contains("STRENGTH")) {
+                PotionEffectType strength = PotionEffectType.getByName("INCREASE_DAMAGE");
+                if (strength != null) {
+                    PotionEffect existing = e.getPlayer().getPotionEffect(strength);
+                    if (existing != null && existing.getAmplifier() > 0) {
+                        e.setCancelled(true);
+                        e.getPlayer().sendMessage("§cNur Stärke I ist erlaubt!");
+                    }
                 }
             }
         }
     }
 
-    // Alle Stärke-Effekte > I blockieren
     @EventHandler
     public void onEffect(EntityPotionEffectEvent e) {
         PotionEffect effect = e.getNewEffect();
-        if (effect != null && effect.getType() == PotionEffectType.INCREASE_DAMAGE && effect.getAmplifier() > 0) {
-            e.setCancelled(true);
+        if (effect != null) {
+            PotionEffectType strength = PotionEffectType.getByName("INCREASE_DAMAGE");
+            if ((strength != null && effect.getType() == strength && effect.getAmplifier() > 0)
+                    || effect.getType() == PotionEffectType.WEAKNESS) {
+                e.setCancelled(true);
+            }
         }
     }
 }
