@@ -1,74 +1,89 @@
 package de.deinname.nomacenostrength;
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.Material;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionEffect;
 
-public class Main extends JavaPlugin {
+public class ListenerClass implements Listener {
 
-    public static Main instance;
+    private final Main plugin = Main.instance;
 
-    public boolean maceEnabled;
-    public boolean weaknessEnabled;
-    public int maxStrengthLevel;
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent e) {
+        if (e.getCurrentItem() == null) return;
 
-    @Override
-    public void onEnable() {
-        instance = this;
+        if (e.getCurrentItem().getType() == Material.MACE && !plugin.maceEnabled) {
+            e.setCancelled(true);
+            e.setCurrentItem(null);
+            e.getWhoClicked().sendMessage("§cMaces sind deaktiviert!");
+        }
+    }
 
-        saveDefaultConfig();
-        loadConfigValues();
+    @EventHandler
+    public void onPickup(EntityPickupItemEvent e) {
+        if (e.getItem().getItemStack().getType() == Material.MACE && !plugin.maceEnabled) {
+            e.setCancelled(true);
+            e.getItem().remove();
+        }
+    }
 
-        Bukkit.getPluginManager().registerEvents(new ListenerClass(), this);
+    @EventHandler
+    public void onUse(PlayerInteractEvent e) {
+        if (e.getItem() == null) return;
 
-        getCommand("togglemace").setExecutor((sender, cmd, label, args) -> {
-            maceEnabled = !maceEnabled;
-            saveConfigValues();
-            sender.sendMessage("§aMaces sind jetzt " + (maceEnabled ? "aktiviert" : "deaktiviert"));
-            return true;
-        });
+        if (e.getItem().getType() == Material.MACE && !plugin.maceEnabled) {
+            e.setCancelled(true);
+            e.getPlayer().getInventory().setItemInMainHand(null);
+            e.getPlayer().sendMessage("§cMaces sind deaktiviert und wurden gelöscht!");
+        }
+    }
 
-        getCommand("toggleweakness").setExecutor((sender, cmd, label, args) -> {
-            weaknessEnabled = !weaknessEnabled;
-            saveConfigValues();
-            sender.sendMessage("§aSchwäche ist jetzt " + (weaknessEnabled ? "aktiviert" : "deaktiviert"));
-            return true;
-        });
+    @EventHandler
+    public void onDrink(PlayerItemConsumeEvent e) {
+        if (e.getItem().getItemMeta() instanceof PotionMeta meta) {
 
-        getCommand("setstrength").setExecutor((sender, cmd, label, args) -> {
-            if (args.length != 1) {
-                sender.sendMessage("§c/setstrength <level>");
-                return true;
+            String typeName = meta.getBasePotionData().getType().name();
+
+            if (typeName.contains("WEAKNESS") && !plugin.weaknessEnabled) {
+                e.setCancelled(true);
+                e.getPlayer().sendMessage("§cSchwäche ist deaktiviert!");
             }
 
-            try {
-                int level = Integer.parseInt(args[0]);
-                if (level < 1) {
-                    sender.sendMessage("§cMinimum ist 1!");
-                    return true;
+            if (typeName.contains("STRENGTH")) {
+                int level = meta.getBasePotionData().isUpgraded() ? 2 : 1;
+
+                if (level > plugin.maxStrengthLevel) {
+                    e.setCancelled(true);
+                    e.getPlayer().sendMessage("§cMaximale Stärke ist " + plugin.maxStrengthLevel);
                 }
-
-                maxStrengthLevel = level;
-                saveConfigValues();
-                sender.sendMessage("§aMaximale Stärke ist jetzt " + level);
-
-            } catch (NumberFormatException e) {
-                sender.sendMessage("§cBitte Zahl eingeben!");
             }
-
-            return true;
-        });
+        }
     }
 
-    public void loadConfigValues() {
-        maceEnabled = getConfig().getBoolean("mace-enabled");
-        weaknessEnabled = getConfig().getBoolean("weakness-enabled");
-        maxStrengthLevel = getConfig().getInt("max-strength-level");
-    }
+    @EventHandler
+    public void onEffect(EntityPotionEffectEvent e) {
+        PotionEffect effect = e.getNewEffect();
+        if (effect == null) return;
 
-    public void saveConfigValues() {
-        getConfig().set("mace-enabled", maceEnabled);
-        getConfig().set("weakness-enabled", weaknessEnabled);
-        getConfig().set("max-strength-level", maxStrengthLevel);
-        saveConfig();
+        String name = effect.getType().getName();
+
+        if (name.equalsIgnoreCase("INCREASE_DAMAGE")) {
+            int level = effect.getAmplifier() + 1;
+
+            if (level > plugin.maxStrengthLevel) {
+                e.setCancelled(true);
+            }
+        }
+
+        if (name.equalsIgnoreCase("WEAKNESS") && !plugin.weaknessEnabled) {
+            e.setCancelled(true);
+        }
     }
 }
