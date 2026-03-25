@@ -44,6 +44,23 @@ public class ListenerClass implements Listener {
             e.getPlayer().sendMessage("§cMaces sind deaktiviert und wurden gelöscht!");
         }
     }
+    @EventHandler
+public void onAttack(org.bukkit.event.entity.EntityDamageByEntityEvent e) {
+    if (!(e.getDamager() instanceof org.bukkit.entity.Player player)) return;
+
+    if (player.getInventory().getItemInMainHand().getType() == Material.MACE 
+            && !plugin.maceEnabled) {
+
+        e.setCancelled(true);
+
+        // Mace löschen
+        player.getInventory().setItemInMainHand(null);
+
+        player.sendMessage("§cMaces sind deaktiviert und wurden gelöscht!");
+    }
+}
+
+    
 
     @EventHandler
     public void onDrink(PlayerItemConsumeEvent e) {
