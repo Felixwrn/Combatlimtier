@@ -1,9 +1,12 @@
 name: NoMaceNoStrength
-version: 1.1.1
+version: 1.2
 main: de.deinname.nomacenostrength.Main
 api-version: 1.21
 
 commands:
   togglemace:
     description: Schaltet Maces ein/aus
-    usage: /togglemace
+  setstrength:
+    description: Setzt das maximale Stärke-Level
+  toggleweakness:
+    description: Aktiviert/Deaktiviert Schwäche
