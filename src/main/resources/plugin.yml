@@ -15,3 +15,5 @@ commands:
     description: Aktiviert/Deaktiviert Regeneration
   togglenetherite:
     description: Schaltet Netherite an/aus
+  combatlimiter:
+    description: Öffnet das CombatLimiter GUI
