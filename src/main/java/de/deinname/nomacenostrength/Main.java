@@ -9,8 +9,9 @@ public class Main extends JavaPlugin {
 
     public boolean maceEnabled;
     public boolean weaknessEnabled;
+    public boolean regenrationEnabled;
     public int maxStrengthLevel;
-
+    
     @Override
     public void onEnable() {
         instance = this;
@@ -31,6 +32,13 @@ public class Main extends JavaPlugin {
             weaknessEnabled = !weaknessEnabled;
             saveConfigValues();
             sender.sendMessage("§aSchwäche ist jetzt " + (weaknessEnabled ? "aktiviert" : "deaktiviert"));
+            return true;
+        });
+
+        getCommand("toggleregeneration").setExecutor((sender, cmd, label, args) -> {
+            regenerationEnabled = !regenrationEnabled;
+            saveConfigValues();
+            sender.sendMessage("§aregeneration ist jetzt " + (regenrationEnabled ? "aktiviert" : "deaktiviert"));
             return true;
         });
 
@@ -62,12 +70,14 @@ public class Main extends JavaPlugin {
     public void loadConfigValues() {
         maceEnabled = getConfig().getBoolean("mace-enabled");
         weaknessEnabled = getConfig().getBoolean("weakness-enabled");
+        regenerationEnabled = getConfig().getBoolean("regeneration-enabled");
         maxStrengthLevel = getConfig().getInt("max-strength-level");
     }
 
     public void saveConfigValues() {
         getConfig().set("mace-enabled", maceEnabled);
         getConfig().set("weakness-enabled", weaknessEnabled);
+        getConfig().set("regeneration-enabled", regenerationEnabled);
         getConfig().set("max-strength-level", maxStrengthLevel);
         saveConfig();
     }
