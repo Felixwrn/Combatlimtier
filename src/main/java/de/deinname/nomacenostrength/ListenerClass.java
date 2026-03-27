@@ -104,3 +104,14 @@ public void onAttack(org.bukkit.event.entity.EntityDamageByEntityEvent e) {
         }
     }
 }
+
+    @EventHandler
+    public void onDrink(PlayerItemConsumeEvent e) {
+        if (e.getItem().getItemMeta() instanceof PotionMeta meta) {
+
+            String typeName = meta.getBasePotionData().getType().name();
+
+            if (typeName.contains("REGENERATION") && !plugin.regemerationEnabled) {
+                e.setCancelled(true);
+                e.getPlayer().sendMessage("§cregeneration ist deaktiviert!");
+            }
