@@ -1,4 +1,5 @@
 mace-enabled: false
 weakness-enabled: false
 regeneration-enabled: false
+haste-enabled: false
 max-strength-level: 1
