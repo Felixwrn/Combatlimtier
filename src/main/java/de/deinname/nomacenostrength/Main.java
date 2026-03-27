@@ -38,7 +38,7 @@ public class Main extends JavaPlugin {
         getCommand("toggleregeneration").setExecutor((sender, cmd, label, args) -> {
             regenerationEnabled = !regenrationEnabled;
             saveConfigValues();
-            sender.sendMessage("§aregeneration ist jetzt " + (regenrationEnabled ? "aktiviert" : "deaktiviert"));
+            sender.sendMessage("§aregeneration ist jetzt " + (regenerationEnabled ? "aktiviert" : "deaktiviert"));
             return true;
         });
 
