@@ -111,7 +111,7 @@ public void onAttack(org.bukkit.event.entity.EntityDamageByEntityEvent e) {
 
             String typeName = meta.getBasePotionData().getType().name();
 
-            if (typeName.contains("REGENERATION") && !plugin.regemerationEnabled) {
+            if (typeName.contains("REGENERATION") && !plugin.regenerationEnabled) {
                 e.setCancelled(true);
                 e.getPlayer().sendMessage("§cregeneration ist deaktiviert!");
             }
