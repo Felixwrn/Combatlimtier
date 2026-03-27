@@ -11,3 +11,5 @@ commands:
     description: Setzt das maximale Stärke-Level
   toggleweakness:
     description: Aktiviert/Deaktiviert Schwäche
+  toggleregeneration:
+    description: Aktiviert/Deaktiviert Regeneration
