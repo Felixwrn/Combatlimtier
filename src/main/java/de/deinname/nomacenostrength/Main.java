@@ -9,7 +9,7 @@ public class Main extends JavaPlugin {
 
     public boolean maceEnabled;
     public boolean weaknessEnabled;
-    public boolean regenrationEnabled;
+    public boolean regenerationEnabled;
     public int maxStrengthLevel;
     
     @Override
