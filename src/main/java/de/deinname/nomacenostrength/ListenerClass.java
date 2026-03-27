@@ -3,6 +3,7 @@ package de.deinname.nomacenostrength;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -44,23 +45,17 @@ public class ListenerClass implements Listener {
             e.getPlayer().sendMessage("§cMaces sind deaktiviert und wurden gelöscht!");
         }
     }
+
     @EventHandler
-public void onAttack(org.bukkit.event.entity.EntityDamageByEntityEvent e) {
-    if (!(e.getDamager() instanceof org.bukkit.entity.Player player)) return;
+    public void onAttack(EntityDamageByEntityEvent e) {
+        if (!(e.getDamager() instanceof org.bukkit.entity.Player player)) return;
 
-    if (player.getInventory().getItemInMainHand().getType() == Material.MACE 
-            && !plugin.maceEnabled) {
-
-        e.setCancelled(true);
-
-        // Mace löschen
-        player.getInventory().setItemInMainHand(null);
-
-        player.sendMessage("§cMaces sind deaktiviert und wurden gelöscht!");
+        if (player.getInventory().getItemInMainHand().getType() == Material.MACE && !plugin.maceEnabled) {
+            e.setCancelled(true);
+            player.getInventory().setItemInMainHand(null);
+            player.sendMessage("§cMaces sind deaktiviert und wurden gelöscht!");
+        }
     }
-}
-
-    
 
     @EventHandler
     public void onDrink(PlayerItemConsumeEvent e) {
@@ -68,11 +63,19 @@ public void onAttack(org.bukkit.event.entity.EntityDamageByEntityEvent e) {
 
             String typeName = meta.getBasePotionData().getType().name();
 
+            // Schwäche
             if (typeName.contains("WEAKNESS") && !plugin.weaknessEnabled) {
                 e.setCancelled(true);
                 e.getPlayer().sendMessage("§cSchwäche ist deaktiviert!");
             }
 
+            // Regeneration
+            if (typeName.contains("REGENERATION") && !plugin.regenerationEnabled) {
+                e.setCancelled(true);
+                e.getPlayer().sendMessage("§cRegeneration ist deaktiviert!");
+            }
+
+            // Stärke
             if (typeName.contains("STRENGTH")) {
                 int level = meta.getBasePotionData().isUpgraded() ? 2 : 1;
 
@@ -91,6 +94,7 @@ public void onAttack(org.bukkit.event.entity.EntityDamageByEntityEvent e) {
 
         String name = effect.getType().getName();
 
+        // Stärke
         if (name.equalsIgnoreCase("INCREASE_DAMAGE")) {
             int level = effect.getAmplifier() + 1;
 
@@ -99,19 +103,14 @@ public void onAttack(org.bukkit.event.entity.EntityDamageByEntityEvent e) {
             }
         }
 
+        // Schwäche
         if (name.equalsIgnoreCase("WEAKNESS") && !plugin.weaknessEnabled) {
+            e.setCancelled(true);
+        }
+
+        // Regeneration
+        if (name.equalsIgnoreCase("REGENERATION") && !plugin.regenerationEnabled) {
             e.setCancelled(true);
         }
     }
 }
-
-    @EventHandler
-    public void onDrink(PlayerItemConsumeEvent e) {
-        if (e.getItem().getItemMeta() instanceof PotionMeta meta) {
-
-            String typeName = meta.getBasePotionData().getType().name();
-
-            if (typeName.contains("REGENERATION") && !plugin.regenerationEnabled) {
-                e.setCancelled(true);
-                e.getPlayer().sendMessage("§cregeneration ist deaktiviert!");
-            }
