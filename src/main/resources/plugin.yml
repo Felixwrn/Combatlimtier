@@ -1,5 +1,6 @@
 name: NoMaceNoStrength
-version: 2.0(a)
+version: 2.1
+author: Felixwrn
 main: de.deinname.nomacenostrength.Main
 api-version: 1.21
 
