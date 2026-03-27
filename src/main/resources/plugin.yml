@@ -13,5 +13,5 @@ commands:
     description: Aktiviert/Deaktiviert Schwäche
   toggleregeneration:
     description: Aktiviert/Deaktiviert Regeneration
-  toggelhaste:
-     description: Aktiviert/Deaktiviert Haste
+  togglenetherite:
+    description: Schaltet Netherite an/aus
