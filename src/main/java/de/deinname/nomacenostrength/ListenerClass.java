@@ -1,6 +1,8 @@
 package de.deinname.nomacenostrength;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -16,77 +18,123 @@ public class ListenerClass implements Listener {
 
     private final Main plugin = Main.instance;
 
+    private boolean isNetherite(Material mat) {
+        return mat.name().startsWith("NETHERITE");
+    }
+
+    // GUI Klicks
+    @EventHandler
+    public void onGUIClick(InventoryClickEvent e) {
+        if (!e.getView().getTitle().equals("§8CombatLimiter")) return;
+
+        e.setCancelled(true);
+
+        if (!(e.getWhoClicked() instanceof Player player)) return;
+
+        switch (e.getSlot()) {
+
+            case 0 -> plugin.maceEnabled = !plugin.maceEnabled;
+
+            case 1 -> {
+                plugin.maxStrengthLevel++;
+                if (plugin.maxStrengthLevel > 2) plugin.maxStrengthLevel = 1;
+            }
+
+            case 2 -> plugin.weaknessEnabled = !plugin.weaknessEnabled;
+
+            case 3 -> plugin.regenerationEnabled = !plugin.regenerationEnabled;
+
+            case 4 -> plugin.netheriteEnabled = !plugin.netheriteEnabled;
+        }
+
+        plugin.saveConfigValues();
+
+        Bukkit.getScheduler().runTask(plugin, () -> GUI.open(player));
+    }
+
+    // Mace & Netherite blocken (Inventar)
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
         if (e.getCurrentItem() == null) return;
 
-        if (e.getCurrentItem().getType() == Material.MACE && !plugin.maceEnabled) {
+        Material mat = e.getCurrentItem().getType();
+
+        if ((mat == Material.MACE && !plugin.maceEnabled) ||
+            (isNetherite(mat) && !plugin.netheriteEnabled)) {
+
             e.setCancelled(true);
             e.setCurrentItem(null);
-            e.getWhoClicked().sendMessage("§cMaces sind deaktiviert!");
         }
     }
 
+    // Aufheben
     @EventHandler
     public void onPickup(EntityPickupItemEvent e) {
-        if (e.getItem().getItemStack().getType() == Material.MACE && !plugin.maceEnabled) {
+        Material mat = e.getItem().getItemStack().getType();
+
+        if ((mat == Material.MACE && !plugin.maceEnabled) ||
+            (isNetherite(mat) && !plugin.netheriteEnabled)) {
+
             e.setCancelled(true);
             e.getItem().remove();
         }
     }
 
+    // Benutzen
     @EventHandler
     public void onUse(PlayerInteractEvent e) {
         if (e.getItem() == null) return;
 
-        if (e.getItem().getType() == Material.MACE && !plugin.maceEnabled) {
+        Material mat = e.getItem().getType();
+
+        if ((mat == Material.MACE && !plugin.maceEnabled) ||
+            (isNetherite(mat) && !plugin.netheriteEnabled)) {
+
             e.setCancelled(true);
             e.getPlayer().getInventory().setItemInMainHand(null);
-            e.getPlayer().sendMessage("§cMaces sind deaktiviert und wurden gelöscht!");
         }
     }
 
+    // Angreifen
     @EventHandler
     public void onAttack(EntityDamageByEntityEvent e) {
-        if (!(e.getDamager() instanceof org.bukkit.entity.Player player)) return;
+        if (!(e.getDamager() instanceof Player player)) return;
 
-        if (player.getInventory().getItemInMainHand().getType() == Material.MACE && !plugin.maceEnabled) {
+        Material mat = player.getInventory().getItemInMainHand().getType();
+
+        if ((mat == Material.MACE && !plugin.maceEnabled) ||
+            (isNetherite(mat) && !plugin.netheriteEnabled)) {
+
             e.setCancelled(true);
             player.getInventory().setItemInMainHand(null);
-            player.sendMessage("§cMaces sind deaktiviert und wurden gelöscht!");
         }
     }
 
+    // Tränke
     @EventHandler
     public void onDrink(PlayerItemConsumeEvent e) {
-        if (e.getItem().getItemMeta() instanceof PotionMeta meta) {
+        if (!(e.getItem().getItemMeta() instanceof PotionMeta meta)) return;
 
-            String typeName = meta.getBasePotionData().getType().name();
+        String type = meta.getBasePotionData().getType().name();
 
-            // Schwäche
-            if (typeName.contains("WEAKNESS") && !plugin.weaknessEnabled) {
+        if (type.contains("WEAKNESS") && !plugin.weaknessEnabled) {
+            e.setCancelled(true);
+        }
+
+        if (type.contains("REGENERATION") && !plugin.regenerationEnabled) {
+            e.setCancelled(true);
+        }
+
+        if (type.contains("STRENGTH")) {
+            int level = meta.getBasePotionData().isUpgraded() ? 2 : 1;
+
+            if (level > plugin.maxStrengthLevel) {
                 e.setCancelled(true);
-                e.getPlayer().sendMessage("§cSchwäche ist deaktiviert!");
-            }
-
-            // Regeneration
-            if (typeName.contains("REGENERATION") && !plugin.regenerationEnabled) {
-                e.setCancelled(true);
-                e.getPlayer().sendMessage("§cRegeneration ist deaktiviert!");
-            }
-
-            // Stärke
-            if (typeName.contains("STRENGTH")) {
-                int level = meta.getBasePotionData().isUpgraded() ? 2 : 1;
-
-                if (level > plugin.maxStrengthLevel) {
-                    e.setCancelled(true);
-                    e.getPlayer().sendMessage("§cMaximale Stärke ist " + plugin.maxStrengthLevel);
-                }
             }
         }
     }
 
+    // Effekte
     @EventHandler
     public void onEffect(EntityPotionEffectEvent e) {
         PotionEffect effect = e.getNewEffect();
@@ -94,21 +142,17 @@ public class ListenerClass implements Listener {
 
         String name = effect.getType().getName();
 
-        // Stärke
         if (name.equalsIgnoreCase("INCREASE_DAMAGE")) {
             int level = effect.getAmplifier() + 1;
-
             if (level > plugin.maxStrengthLevel) {
                 e.setCancelled(true);
             }
         }
 
-        // Schwäche
         if (name.equalsIgnoreCase("WEAKNESS") && !plugin.weaknessEnabled) {
             e.setCancelled(true);
         }
 
-        // Regeneration
         if (name.equalsIgnoreCase("REGENERATION") && !plugin.regenerationEnabled) {
             e.setCancelled(true);
         }
