@@ -10,8 +10,9 @@ public class Main extends JavaPlugin {
     public boolean maceEnabled;
     public boolean weaknessEnabled;
     public boolean regenerationEnabled;
+    public boolean netheriteEnabled;
     public int maxStrengthLevel;
-    
+
     @Override
     public void onEnable() {
         instance = this;
@@ -21,48 +22,11 @@ public class Main extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new ListenerClass(), this);
 
-        getCommand("togglemace").setExecutor((sender, cmd, label, args) -> {
-            maceEnabled = !maceEnabled;
-            saveConfigValues();
-            sender.sendMessage("§aMaces sind jetzt " + (maceEnabled ? "aktiviert" : "deaktiviert"));
-            return true;
-        });
+        // GUI Command
+        getCommand("combatlimiter").setExecutor((sender, cmd, label, args) -> {
+            if (!(sender instanceof org.bukkit.entity.Player player)) return true;
 
-        getCommand("toggleweakness").setExecutor((sender, cmd, label, args) -> {
-            weaknessEnabled = !weaknessEnabled;
-            saveConfigValues();
-            sender.sendMessage("§aSchwäche ist jetzt " + (weaknessEnabled ? "aktiviert" : "deaktiviert"));
-            return true;
-        });
-
-        getCommand("toggleregeneration").setExecutor((sender, cmd, label, args) -> {
-            regenerationEnabled = !regenerationEnabled;
-            saveConfigValues();
-            sender.sendMessage("§aregeneration ist jetzt " + (regenerationEnabled ? "aktiviert" : "deaktiviert"));
-            return true;
-        });
-
-        getCommand("setstrength").setExecutor((sender, cmd, label, args) -> {
-            if (args.length != 1) {
-                sender.sendMessage("§c/setstrength <level>");
-                return true;
-            }
-
-            try {
-                int level = Integer.parseInt(args[0]);
-                if (level < 1) {
-                    sender.sendMessage("§cMinimum ist 1!");
-                    return true;
-                }
-
-                maxStrengthLevel = level;
-                saveConfigValues();
-                sender.sendMessage("§aMaximale Stärke ist jetzt " + level);
-
-            } catch (NumberFormatException e) {
-                sender.sendMessage("§cBitte Zahl eingeben!");
-            }
-
+            GUI.open(player);
             return true;
         });
     }
@@ -71,6 +35,7 @@ public class Main extends JavaPlugin {
         maceEnabled = getConfig().getBoolean("mace-enabled");
         weaknessEnabled = getConfig().getBoolean("weakness-enabled");
         regenerationEnabled = getConfig().getBoolean("regeneration-enabled");
+        netheriteEnabled = getConfig().getBoolean("netherite-enabled");
         maxStrengthLevel = getConfig().getInt("max-strength-level");
     }
 
@@ -78,6 +43,7 @@ public class Main extends JavaPlugin {
         getConfig().set("mace-enabled", maceEnabled);
         getConfig().set("weakness-enabled", weaknessEnabled);
         getConfig().set("regeneration-enabled", regenerationEnabled);
+        getConfig().set("netherite-enabled", netheriteEnabled);
         getConfig().set("max-strength-level", maxStrengthLevel);
         saveConfig();
     }
