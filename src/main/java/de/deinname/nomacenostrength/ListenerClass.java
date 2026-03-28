@@ -59,7 +59,6 @@ public void onDeath(PlayerDeathEvent e) {
 
         PVPManager.endFight(player);
 
-        player.teleport(player.getWorld().getSpawnLocation());
     }
 }
 
