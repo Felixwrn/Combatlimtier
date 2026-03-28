@@ -41,7 +41,7 @@ public class Main extends JavaPlugin {
         });
 
         // PvP GUI
-        getCommand("pvpgui").setExecutor((sender, cmd, label, args) -> {
+        getCommand("pvp").setExecutor((sender, cmd, label, args) -> {
             if (sender instanceof org.bukkit.entity.Player player) {
                 PvPGUI.open(player);
             }
