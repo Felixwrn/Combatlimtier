@@ -18,21 +18,37 @@ public class PVPManager {
     }
 
     public static void accept(Player player) {
-        if (!requests.containsKey(player.getUniqueId())) return;
+    UUID playerUUID = player.getUniqueId();
 
-        Player sender = player.getServer().getPlayer(requests.get(player.getUniqueId()));
-        if (sender == null) return;
-
-        fights.put(player.getUniqueId(), sender.getUniqueId());
-        fights.put(sender.getUniqueId(), player.getUniqueId());
-
-        requests.remove(player.getUniqueId());
-
-        Main plugin = Main.instance;
-
-        player.teleport(plugin.arenaSpawn1);
-        sender.teleport(plugin.arenaSpawn2);
+    if (!requests.containsKey(playerUUID)) {
+        player.sendMessage("§cDu hast keine offene Anfrage!");
+        return;
     }
+
+    UUID senderUUID = requests.get(playerUUID);
+    Player sender = player.getServer().getPlayer(senderUUID);
+
+    if (sender == null) {
+        player.sendMessage("§cDer Spieler ist nicht mehr online!");
+        requests.remove(playerUUID);
+        return;
+    }
+
+    // Fight starten
+    fights.put(playerUUID, senderUUID);
+    fights.put(senderUUID, playerUUID);
+
+    requests.remove(playerUUID);
+
+    Main plugin = Main.instance;
+
+    // Teleport
+    player.teleport(plugin.arenaSpawn1);
+    sender.teleport(plugin.arenaSpawn2);
+
+    player.sendMessage("§aKampf gestartet gegen " + sender.getName());
+    sender.sendMessage("§aKampf gestartet gegen " + player.getName());
+}
 
     public static void endFight(Player loser) {
         if (!fights.containsKey(loser.getUniqueId())) return;
