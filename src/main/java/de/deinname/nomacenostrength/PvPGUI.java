@@ -20,8 +20,8 @@ public class PvPGUI {
             ItemStack item = new ItemStack(Material.PLAYER_HEAD);
             ItemMeta meta = item.getItemMeta();
 
-            meta.setDisplayName(target.getName());
-
+           meta.setDisplayName("§a" + target.getName());
+            
             item.setItemMeta(meta);
 
             inv.setItem(slot++, item);
