@@ -17,3 +17,5 @@ commands:
     description: Schaltet Netherite an/aus
   combatlimiter:
     description: Öffnet das CombatLimiter GUI
+  pvpgui:
+    description: Öffnet PvP Menü
