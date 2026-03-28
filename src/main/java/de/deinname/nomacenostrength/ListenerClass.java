@@ -66,12 +66,25 @@ public class ListenerClass implements Listener {
     }
 
     // ================= PvP Tod =================
-    @EventHandler
-    public void onDeath(PlayerDeathEvent e) {
-        if (PVPManager.isInFight(e.getEntity())) {
-            PVPManager.endFight(e.getEntity());
-        }
+@EventHandler
+public void onDeath(PlayerDeathEvent e) {
+    Player player = e.getEntity();
+
+    // Nur im PvP Fight
+    if (PVPManager.isInFight(player)) {
+
+        // Items behalten
+        e.setKeepInventory(true);
+        e.getDrops().clear();
+
+        // EXP behalten
+        e.setKeepLevel(true);
+        e.setDroppedExp(0);
+
+        // Fight beenden
+        PVPManager.endFight(player.teleport(Bukkit.getWorld("world").getSpawnLocation()););
     }
+}
 
     // ================= CombatLimiter =================
     @EventHandler
