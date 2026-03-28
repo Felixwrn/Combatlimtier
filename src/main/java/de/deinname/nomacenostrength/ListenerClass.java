@@ -72,8 +72,9 @@ Player target = Bukkit.getPlayer(targetName);
         if (!(e.getDamager() instanceof Player damager)) return;
         if (!(e.getEntity() instanceof Player target)) return;
 
-        if (!PVPManager.isInFight(damager)) {
-            e.setCancelled(true);
+if (!PVPManager.isInFight(damager) || !PVPManager.isInFight(target)) {
+    e.setCancelled(true);
+}
         }
     }
 
