@@ -68,9 +68,13 @@ Player target = Bukkit.getPlayer(targetName);
 
     // ================= PvP Damage =================
     @EventHandler
-    public void onDamage(EntityDamageByEntityEvent e) {
-        if (!(e.getDamager() instanceof Player damager)) return;
-        if (!(e.getEntity() instanceof Player target)) return;
+public void onDamage(EntityDamageByEntityEvent e) {
+    if (!(e.getDamager() instanceof Player damager)) return;
+    if (!(e.getEntity() instanceof Player target)) return;
+
+    // PvP NICHT blockieren!
+    // nur optional Info oder Tracking
+}
 
 if (!PVPManager.isInFight(damager) || !PVPManager.isInFight(target)) {
     e.setCancelled(true);
