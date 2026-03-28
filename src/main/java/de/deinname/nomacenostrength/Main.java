@@ -47,6 +47,13 @@ public class Main extends JavaPlugin {
             }
             return true;
         });
+
+        getCommand("accept").setExecutor((sender, cmd, label, args) -> {
+            if (!(sender instanceof org.bukkit.entity.Player player)) return true;
+
+    PVPManager.accept(player);
+    return true;
+});
     }
 
     public void loadConfigValues() {
