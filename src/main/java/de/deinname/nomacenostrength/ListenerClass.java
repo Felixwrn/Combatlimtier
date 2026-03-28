@@ -57,8 +57,8 @@ public class ListenerClass implements Listener {
         ItemStack item = e.getCurrentItem();
         if (item == null) return;
 
-        String targetName = item.getItemMeta().getDisplayName();
-        Player target = Bukkit.getPlayer(targetName);
+      String targetName = org.bukkit.ChatColor.stripColor(item.getItemMeta().getDisplayName());
+Player target = Bukkit.getPlayer(targetName);
 
         if (target != null) {
             PVPManager.sendRequest(player, target);
