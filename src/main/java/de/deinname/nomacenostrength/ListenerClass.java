@@ -56,7 +56,7 @@ public class ListenerClass implements Listener {
 
             PVPManager.endFight(player);
 
-            player.teleport(Bukkit.getWorld("world").getSpawnLocation());
+            player.teleport(player.getWorld().getSpawnLocation());
         }
     }
 
