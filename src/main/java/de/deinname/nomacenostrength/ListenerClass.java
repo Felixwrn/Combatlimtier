@@ -10,7 +10,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 
 public class ListenerClass implements Listener {
@@ -21,7 +20,7 @@ public class ListenerClass implements Listener {
         return mat.name().startsWith("NETHERITE");
     }
 
-    // ================= GUI CombatLimiter =================
+    // ================= CombatLimiter GUI =================
     @EventHandler
     public void onGUIClick(InventoryClickEvent e) {
         if (!e.getView().getTitle().equals("§8CombatLimiter")) return;
@@ -55,10 +54,10 @@ public class ListenerClass implements Listener {
         if (!(e.getWhoClicked() instanceof Player player)) return;
 
         ItemStack item = e.getCurrentItem();
-        if (item == null) return;
+        if (item == null || item.getItemMeta() == null) return;
 
-      String targetName = org.bukkit.ChatColor.stripColor(item.getItemMeta().getDisplayName());
-Player target = Bukkit.getPlayer(targetName);
+        String name = org.bukkit.ChatColor.stripColor(item.getItemMeta().getDisplayName());
+        Player target = Bukkit.getPlayer(name);
 
         if (target != null) {
             PVPManager.sendRequest(player, target);
@@ -66,26 +65,12 @@ Player target = Bukkit.getPlayer(targetName);
         }
     }
 
-    // ================= PvP Damage =================
-    @EventHandler
-public void onDamage(EntityDamageByEntityEvent e) {
-    if (!(e.getDamager() instanceof Player damager)) return;
-    if (!(e.getEntity() instanceof Player target)) return;
-
-    // PvP NICHT blockieren!
-    // nur optional Info oder Tracking
-}
-
-if (!PVPManager.isInFight(damager) || !PVPManager.isInFight(target)) {
-    e.setCancelled(true);
-}
-        }
-    }
-
-    // ================= Tod =================
+    // ================= PvP Tod =================
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
-        PVPManager.endFight(e.getEntity());
+        if (PVPManager.isInFight(e.getEntity())) {
+            PVPManager.endFight(e.getEntity());
+        }
     }
 
     // ================= CombatLimiter =================
@@ -142,5 +127,20 @@ if (!PVPManager.isInFight(damager) || !PVPManager.isInFight(target)) {
             int level = meta.getBasePotionData().isUpgraded() ? 2 : 1;
             if (level > plugin.maxStrengthLevel) e.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void onEffect(EntityPotionEffectEvent e) {
+        if (e.getNewEffect() == null) return;
+
+        String name = e.getNewEffect().getType().getName();
+
+        if (name.equalsIgnoreCase("INCREASE_DAMAGE")) {
+            int level = e.getNewEffect().getAmplifier() + 1;
+            if (level > plugin.maxStrengthLevel) e.setCancelled(true);
+        }
+
+        if (name.equalsIgnoreCase("WEAKNESS") && !plugin.weaknessEnabled) e.setCancelled(true);
+        if (name.equalsIgnoreCase("REGENERATION") && !plugin.regenerationEnabled) e.setCancelled(true);
     }
 }
