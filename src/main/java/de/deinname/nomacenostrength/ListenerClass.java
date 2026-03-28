@@ -20,31 +20,7 @@ public class ListenerClass implements Listener {
         return mat.name().startsWith("NETHERITE");
     }
 
-    // ================= CombatLimiter GUI =================
-    @EventHandler
-    public void onGUIClick(InventoryClickEvent e) {
-        if (!e.getView().getTitle().equals("§8CombatLimiter")) return;
-
-        e.setCancelled(true);
-
-        if (!(e.getWhoClicked() instanceof Player player)) return;
-
-        switch (e.getSlot()) {
-            case 0 -> plugin.maceEnabled = !plugin.maceEnabled;
-            case 1 -> {
-                plugin.maxStrengthLevel++;
-                if (plugin.maxStrengthLevel > 2) plugin.maxStrengthLevel = 1;
-            }
-            case 2 -> plugin.weaknessEnabled = !plugin.weaknessEnabled;
-            case 3 -> plugin.regenerationEnabled = !plugin.regenerationEnabled;
-            case 4 -> plugin.netheriteEnabled = !plugin.netheriteEnabled;
-        }
-
-        plugin.saveConfigValues();
-        Bukkit.getScheduler().runTask(plugin, () -> GUI.open(player));
-    }
-
-    // ================= PvP GUI =================
+    // ===== PvP GUI =====
     @EventHandler
     public void onPvPGUI(InventoryClickEvent e) {
         if (!e.getView().getTitle().equals("§8PvP Menü")) return;
@@ -65,35 +41,26 @@ public class ListenerClass implements Listener {
         }
     }
 
-    // ================= PvP Tod =================
-@EventHandler
-public void onDeath(PlayerDeathEvent e) {
-    Player player = e.getEntity();
+    // ===== Death =====
+    @EventHandler
+    public void onDeath(PlayerDeathEvent e) {
+        Player player = e.getEntity();
 
-    // Nur im PvP Fight
-@EventHandler
-public void onDeath(PlayerDeathEvent e) {
-    Player player = e.getEntity();
+        if (PVPManager.isInFight(player)) {
 
-    if (PVPManager.isInFight(player)) {
+            e.setKeepInventory(true);
+            e.getDrops().clear();
 
-        // Items behalten
-        e.setKeepInventory(true);
-        e.getDrops().clear();
+            e.setKeepLevel(true);
+            e.setDroppedExp(0);
 
-        // EXP behalten
-        e.setKeepLevel(true);
-        e.setDroppedExp(0);
+            PVPManager.endFight(player);
 
-        // Fight beenden
-        PVPManager.endFight(player);
-
-        // Danach teleportieren
-        player.teleport(Bukkit.getWorld("world").getSpawnLocation());
+            player.teleport(Bukkit.getWorld("world").getSpawnLocation());
+        }
     }
-}
 
-    // ================= CombatLimiter =================
+    // ===== Inventory Block =====
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
         if (e.getCurrentItem() == null) return;
@@ -108,6 +75,7 @@ public void onDeath(PlayerDeathEvent e) {
         }
     }
 
+    // ===== Pickup =====
     @EventHandler
     public void onPickup(EntityPickupItemEvent e) {
         Material mat = e.getItem().getItemStack().getType();
@@ -120,6 +88,7 @@ public void onDeath(PlayerDeathEvent e) {
         }
     }
 
+    // ===== Use Item =====
     @EventHandler
     public void onUse(PlayerInteractEvent e) {
         if (e.getItem() == null) return;
@@ -134,6 +103,7 @@ public void onDeath(PlayerDeathEvent e) {
         }
     }
 
+    // ===== Drink =====
     @EventHandler
     public void onDrink(PlayerItemConsumeEvent e) {
         if (!(e.getItem().getItemMeta() instanceof PotionMeta meta)) return;
@@ -149,6 +119,7 @@ public void onDeath(PlayerDeathEvent e) {
         }
     }
 
+    // ===== Effects =====
     @EventHandler
     public void onEffect(EntityPotionEffectEvent e) {
         if (e.getNewEffect() == null) return;
