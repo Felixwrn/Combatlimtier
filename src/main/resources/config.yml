@@ -3,3 +3,15 @@ weakness-enabled: false
 regeneration-enabled: false
 netherite-enabled: false
 max-strength-level: 1
+arena:
+  world: world
+  spawn1:
+    x: 0
+    y: 100
+    z: 0
+  spawn2:
+    x: 5
+    y: 100
+    z: 0
+
+reward: 100
