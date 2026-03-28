@@ -43,22 +43,25 @@ public class ListenerClass implements Listener {
 
     // ===== Death =====
     @EventHandler
-    public void onDeath(PlayerDeathEvent e) {
-        Player player = e.getEntity();
+public void onDeath(PlayerDeathEvent e) {
+    Player player = e.getEntity();
 
-        if (PVPManager.isInFight(player)) {
+    player.sendMessage("§cDEBUG: Death Event wurde ausgelöst");
 
-            e.setKeepInventory(true);
-            e.getDrops().clear();
+    if (PVPManager.isInFight(player)) {
+        player.sendMessage("§aDEBUG: Spieler ist im Fight");
 
-            e.setKeepLevel(true);
-            e.setDroppedExp(0);
+        e.setKeepInventory(true);
+        e.getDrops().clear();
 
-            PVPManager.endFight(player);
+        e.setKeepLevel(true);
+        e.setDroppedExp(0);
 
-            player.teleport(player.getWorld().getSpawnLocation());
-        }
+        PVPManager.endFight(player);
+
+        player.teleport(player.getWorld().getSpawnLocation());
     }
+}
 
     // ===== Inventory Block =====
     @EventHandler
