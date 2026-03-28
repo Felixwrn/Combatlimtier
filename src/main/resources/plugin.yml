@@ -5,16 +5,6 @@ main: de.deinname.nomacenostrength.Main
 api-version: 1.21
 
 commands:
-  togglemace:
-    description: Schaltet Maces ein/aus
-  setstrength:
-    description: Setzt das maximale Stärke-Level
-  toggleweakness:
-    description: Aktiviert/Deaktiviert Schwäche
-  toggleregeneration:
-    description: Aktiviert/Deaktiviert Regeneration
-  togglenetherite:
-    description: Schaltet Netherite an/aus
   combatlimiter:
     description: Öffnet das CombatLimiter GUI
   accept:
