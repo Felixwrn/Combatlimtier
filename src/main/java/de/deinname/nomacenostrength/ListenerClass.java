@@ -71,6 +71,10 @@ public void onDeath(PlayerDeathEvent e) {
     Player player = e.getEntity();
 
     // Nur im PvP Fight
+@EventHandler
+public void onDeath(PlayerDeathEvent e) {
+    Player player = e.getEntity();
+
     if (PVPManager.isInFight(player)) {
 
         // Items behalten
@@ -82,7 +86,10 @@ public void onDeath(PlayerDeathEvent e) {
         e.setDroppedExp(0);
 
         // Fight beenden
-        PVPManager.endFight(player.teleport(Bukkit.getWorld("world").getSpawnLocation()););
+        PVPManager.endFight(player);
+
+        // Danach teleportieren
+        player.teleport(Bukkit.getWorld("world").getSpawnLocation());
     }
 }
 
