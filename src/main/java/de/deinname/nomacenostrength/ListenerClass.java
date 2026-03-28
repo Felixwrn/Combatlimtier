@@ -62,6 +62,14 @@ public void onDeath(PlayerDeathEvent e) {
     }
 }
 
+    @EventHandler
+public void onRespawn(PlayerRespawnEvent e) {
+    Player player = e.getPlayer();
+
+    // Nur wenn er im Fight war
+    e.setRespawnLocation(player.getWorld().getSpawnLocation());
+}
+
     // ===== Inventory Block =====
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
