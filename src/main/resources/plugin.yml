@@ -17,5 +17,11 @@ commands:
     description: Schaltet Netherite an/aus
   combatlimiter:
     description: Öffnet das CombatLimiter GUI
+  pvp:
+    description: Fordere einen Spieler heraus
+  accept:
+    description: Nimm eine PvP Anfrage an
+  deny:
+    description: Lehne eine PvP Anfrage ab
   pvpgui:
     description: Öffnet PvP Menü
