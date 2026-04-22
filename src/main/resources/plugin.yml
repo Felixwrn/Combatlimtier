@@ -4,6 +4,9 @@ author: Felixwrn
 main: de.deinname.nomacenostrength.Main
 api-version: 1.21
 
+depend: 
+   - coreapi
+
 commands:
   combatlimiter:
     description: Öffnet das CombatLimiter GUI
