@@ -1,3 +1,10 @@
+We Will no longer Support this projct
+We hope you understand
+If you find any bugs you can report them our bugfix Team will fix them 
+WRNlabs - Ai made in germany
+
+
+
 🔥 Main Features
 
 🔨 Mace Control: Maces can be completely disabled. When disabled: ❌ Pick up → deleted ❌ Inventory → deleted ❌ Use → deleted ❌ Attack → deleted
