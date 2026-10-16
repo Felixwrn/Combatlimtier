@@ -10,15 +10,15 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class GUI {
 
     public static void open(Player player) {
-        Main plugin = Main.instance;
+        Main plugin = Main.getPlugin(Main.class);
 
         Inventory inv = Bukkit.createInventory(null, 9, "§8CombatLimiter");
 
-        inv.setItem(0, createItem(Material.MACE, "§eMace: " + status(plugin.maceEnabled)));
-        inv.setItem(1, createItem(Material.BLAZE_POWDER, "§eStärke: §f" + plugin.maxStrengthLevel));
-        inv.setItem(2, createItem(Material.FERMENTED_SPIDER_EYE, "§eWeakness: " + status(plugin.weaknessEnabled)));
-        inv.setItem(3, createItem(Material.GHAST_TEAR, "§eRegen: " + status(plugin.regenerationEnabled)));
-        inv.setItem(4, createItem(Material.NETHERITE_SWORD, "§eNetherite: " + status(plugin.netheriteEnabled)));
+        inv.setItem(0, createItem(Material.MACE, "§eMace: " + status(plugin.getConfig().getBoolean("mace-enabled"))));
+        inv.setItem(1, createItem(Material.BLAZE_POWDER, "§eStärke: §f" + plugin.getConfig().getInt("max-strength-level", 1)));
+        inv.setItem(2, createItem(Material.FERMENTED_SPIDER_EYE, "§eWeakness: " + status(plugin.getConfig().getBoolean("weakness-enabled"))));
+        inv.setItem(3, createItem(Material.GHAST_TEAR, "§eRegen: " + status(plugin.getConfig().getBoolean("regeneration-enabled"))));
+        inv.setItem(4, createItem(Material.NETHERITE_SWORD, "§eNetherite: " + status(plugin.getConfig().getBoolean("netherite-enabled"))));
 
         player.openInventory(inv);
     }

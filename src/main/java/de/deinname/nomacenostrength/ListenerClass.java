@@ -30,7 +30,7 @@ public class ListenerClass implements Listener {
     @EventHandler
     public void onDrink(PlayerItemConsumeEvent e){
         if(e.getItem().getItemMeta() instanceof PotionMeta meta){
-            if(meta.getBasePotionData().getType().name().contains("STRENGTH")){
+            if(meta.getBasePotionType() != null && meta.getBasePotionType().name().contains("STRENGTH")){
                 e.setCancelled(true);
             }
         }

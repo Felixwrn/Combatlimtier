@@ -2,7 +2,7 @@ name: combatlimmiter
 version: 3.1
 author: Felixwrn
 main: de.deinname.nomacenostrength.Main
-api-version: 1.21
+api-version: '26.3'
 
 commands:
   togglemace:
