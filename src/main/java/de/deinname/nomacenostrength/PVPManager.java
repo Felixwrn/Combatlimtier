@@ -40,11 +40,11 @@ public class PVPManager {
 
     requests.remove(playerUUID);
 
-    Main plugin = Main.instance;
+    Main plugin = Main.getPlugin(Main.class);
 
     // Teleport
-    player.teleport(plugin.arenaSpawn1);
-    sender.teleport(plugin.arenaSpawn2);
+    player.teleport(plugin.getArenaSpawn(1));
+    sender.teleport(plugin.getArenaSpawn(2));
 
     player.sendMessage("§aKampf gestartet gegen " + sender.getName());
     sender.sendMessage("§aKampf gestartet gegen " + player.getName());
@@ -59,7 +59,7 @@ public class PVPManager {
         fights.remove(loser.getUniqueId());
         fights.remove(opponentUUID);
 
-        Main plugin = Main.instance;
+        Main plugin = Main.getPlugin(Main.class);
 
         if (winner != null) {
             plugin.addWin(winner.getUniqueId());

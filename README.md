@@ -1,3 +1,12 @@
+## Minecraft 26.3
+
+Build with JDK 25 and `mvn clean verify`. The plugin targets Paper 26.3
+(API `26.3.build.200-stable`).
+
+The legacy GUI and duel helpers compile against the current configuration API.
+The existing entry point registers the item/potion listener; command handlers
+and GUI click actions described below are not implemented by this entry point.
+
 We Will no longer Support this projct
 We hope you understand
 If you find any bugs you can report them our bugfix Team will fix them 
